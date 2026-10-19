@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:15
+    container_name: estamparia_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: estamparia
+    ports:
+      - "5433:5432"

@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  telefone  String?
+  pedidos   Pedido[]
+  criado_em DateTime @default(now())
+}
+
+model Produto {
+  id          String       @id @default(uuid())
+  sku         String       @unique
+  nome        String
+  descricao   String?
+  preco_base  Decimal      @db.Decimal(10, 2)
+  tipo        TipoProduto 
+  estoque     Int          @default(0)
+  itens       ItemPedido[]
+  ativo       Boolean      @default(true)
+}
+
+model Pedido {
+  id               String         @id @default(uuid())
+  cliente_id       String
+  cliente          Cliente        @relation(fields: [cliente_id], references: [id])
+  status           StatusPedido   @default(AGUARDANDO_PAGAMENTO)
+  gateway_pagamento GatewayPagamento
+  total            Decimal        @db.Decimal(10, 2)
+  itens            ItemPedido[]
+  criado_em        DateTime       @default(now())
+  atualizado_em    DateTime       @updatedAt
+}
+
+model ItemPedido {
+  id             String  @id @default(uuid())
+  pedido_id      String
+  pedido         Pedido  @relation(fields: [pedido_id], references: [id])
+  produto_id     String
+  produto        Produto @relation(fields: [produto_id], references: [id])
+  quantidade     Int
+  preco_unitario Decimal @db.Decimal(10, 2)
+}
+
+enum TipoProduto {
+  PRODUTO_FISICO
+  SERVICO
+}
+
+enum StatusPedido {
+  AGUARDANDO_PAGAMENTO
+  PAGO
+  EM_PRODUCAO
+  CONCLUIDO
+  CANCELADO
+}
+
+enum GatewayPagamento {
+  PIX
+  VINDI
+  CARTAO_CREDITO
+}
