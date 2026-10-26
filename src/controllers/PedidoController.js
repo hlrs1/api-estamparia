@@ -11,6 +11,15 @@ class PedidoController {
             return res.status(400).json({ erro: error.message });
         }
     }
+
+    async listar(req, res) {
+    try {
+        const pedidos = await pedidoService.listarPedidos();
+        return res.status(200).json(pedidos);
+    } catch (error) {
+        return res.status(500).json({ erro: 'Falha ao buscar métricas de pedidos' });
+    }
+}
 }
 
 module.exports = new PedidoController();

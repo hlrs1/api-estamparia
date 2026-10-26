@@ -59,6 +59,13 @@ class PedidoService {
 
         return pedidoCriado;
     }
+
+    async listarPedidos() {
+    return await prisma.pedido.findMany({
+        include: { itens: true },
+        orderBy: { criado_em: 'desc' } // Os mais recentes primeiro
+    });
+}
 }
 
 module.exports = new PedidoService();
